@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 Simple Admin Dashboard</title>
+    <link rel="stylesheet" href="res/bootstrap@5.0.0-alpha2.min.css">
+    <link rel="stylesheet" href="res/chartist.min.css">
+      <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+          /* Default carousel item height */
+        .carousel-inner .carousel-item {
+          height: 300px; /* Default height for small screens */
+        }
+    
+        /* Medium screens (576px and up) */
+        @media (min-width: 576px) {
+          .carousel-inner .carousel-item {
+            height: 500px; /* Height for medium screens */
+          }
+        }
+    
+        /* Large screens (992px and up) */
+        @media (min-width: 992px) {
+          .carousel-inner .carousel-item {
+            height: 700px; /* Height for large screens */
+          }
+        }
+          /* Ensure images cover the available space within each item */
+        .carousel-inner .carousel-item img {
+          object-fit: scale-down;
+          width: 100%;
+          height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      <!-- Images will be dynamically added here -->
+    </div>
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  var carouselInner = document.querySelector(".carousel-inner");
+
+  // Define the per_page parameter
+  var perPage = 100; // Number of items per page
+  var totalPages = 2
+  // Function to fetch images and add them to the carousel
+  function fetchAndAddImages(pageNumber) {
+    // Fetch image data from WordPress media library using REST API
+    fetch(`https://hadad.edu.kg/wp-json/wp/v2/media?per_page=${perPage}&page=${pageNumber}`)
+      .then(response => response.json())
+      .then(images => {
+        var imagePattern = /^exp2_SF_/; // Updated pattern
+
+        var filteredImages = images.filter(image => image.title.rendered.match(imagePattern));
+        console.log(filteredImages)
+        filteredImages.forEach((image, index) => {
+          var imageUrl = image.source_url;
+          var carouselItem = document.createElement("div");
+          carouselItem.classList.add("carousel-item");
+
+          if (index === 0 && pageNumber===1) {
+            carouselItem.classList.add("active");
+          }
+
+          var imgElement = document.createElement("img");
+          imgElement.src = imageUrl;
+          imgElement.alt = image.alt_text || "Slide";
+
+          carouselItem.appendChild(imgElement);
+          carouselInner.appendChild(carouselItem);
+        });
+
+        // Initialize the Bootstrap carousel after adding images to the second page
+        if (pageNumber === totalPages) {
+          $('.carousel').carousel({
+            interval: 2000 // Adjust the interval (in milliseconds) between transitions
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching images:", error);
+      });
+  }
+
+ // Loop to fetch and add images for each page
+  for (var i = 1; i <= totalPages; i++) {
+    console.log(i)
+    fetchAndAddImages(i);
+  }
+});
+
+</script>
+<!-- Link to Bootstrap JS and Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
