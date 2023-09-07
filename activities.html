@@ -78,7 +78,7 @@ function initializeCarousel(carouselID) {
 }
 
 
-function populateCarouselWithImages(carouselID, totalPages) {
+function populateCarouselWithImages(carouselID, totalPages, imagePattern) {
   // Select the carousel element by ID
   var carousel = document.getElementById(carouselID);
 
@@ -94,7 +94,7 @@ function populateCarouselWithImages(carouselID, totalPages) {
       fetch(`https://hadad.edu.kg/wp-json/wp/v2/media?per_page=${perPage}&page=${pageNumber}`)
         .then(response => response.json())
         .then(images => {
-          var imagePattern = /^exp2_SF_/; // Updated pattern
+          console.log(imagePattern)
 
           var filteredImages = images.filter(image => image.title.rendered.match(imagePattern));
 
@@ -140,9 +140,13 @@ function populateCarouselWithImages(carouselID, totalPages) {
 
 
 <script>
+
   document.addEventListener("DOMContentLoaded", function() {
-      populateCarouselWithImages("habitatCarousel", 2);
-      populateCarouselWithImages("birdsCarousel", 2)
+      var imagePattern = /^exp2_SF_/; // Specify the image pattern you want to use
+      populateCarouselWithImages("habitatCarousel", 2, imagePattern);
+      
+      imagePattern = /^exp2_birds_/; // Specify the image pattern you want to use
+      populateCarouselWithImages("birdsCarousel", 2, imagePattern)
     });
 
 </script>
