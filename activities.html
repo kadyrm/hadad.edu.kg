@@ -70,60 +70,80 @@
 
 
 
+<script>
+
+// Function to initialize the Bootstrap carousel
+function initializeCarousel(carouselID) {
+  $(`#${carouselID}`).carousel();
+}
+
+
+function populateCarouselWithImages(carouselID, totalPages) {
+  // Select the carousel element by ID
+  var carousel = document.getElementById(carouselID);
+
+  if (carousel) {
+    var carouselInner = carousel.querySelector(".carousel-inner");
+
+    // Define the per_page parameter
+    var perPage = 100; // Number of items per page
+
+    // Function to fetch images and add them to the carousel
+    function fetchAndAddImages(pageNumber) {
+      // Fetch image data from WordPress media library using REST API
+      fetch(`https://hadad.edu.kg/wp-json/wp/v2/media?per_page=${perPage}&page=${pageNumber}`)
+        .then(response => response.json())
+        .then(images => {
+          var imagePattern = /^exp2_SF_/; // Updated pattern
+
+          var filteredImages = images.filter(image => image.title.rendered.match(imagePattern));
+
+          filteredImages.forEach((image, index) => {
+            var imageUrl = image.source_url;
+            var carouselItem = document.createElement("div");
+            carouselItem.classList.add("carousel-item");
+
+            if (index === 0 && pageNumber === 1) {
+              carouselItem.classList.add("active");
+            }
+
+            var imgElement = document.createElement("img");
+            imgElement.src = imageUrl;
+            imgElement.alt = image.alt_text || "Slide";
+
+            var caption = document.createElement("div");
+            caption.classList.add("carousel-caption");
+            caption.innerText = image.title.rendered; // Set caption text (if needed)
+
+            carouselItem.appendChild(imgElement);
+            carouselItem.appendChild(caption); // Append caption to the item
+            carouselInner.appendChild(carouselItem);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching images:", error);
+        });
+    }
+
+    // Loop to fetch and add images for each page
+    for (var i = 1; i <= totalPages; i++) {
+      fetchAndAddImages(i);
+    }
+    initializeCarousel(carouselID)
+  }
+}
+
+
+</script>
+
+
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-  var carouselInner = document.querySelector(".carousel-inner");
-
-  // Define the per_page parameter
-  var perPage = 100; // Number of items per page
-  var totalPages = 2
-  // Function to fetch images and add them to the carousel
-  function fetchAndAddImages(pageNumber) {
-    // Fetch image data from WordPress media library using REST API
-    fetch(`https://hadad.edu.kg/wp-json/wp/v2/media?per_page=${perPage}&page=${pageNumber}`)
-      .then(response => response.json())
-      .then(images => {
-        var imagePattern = /^exp2_SF_/; // Updated pattern
-
-        var filteredImages = images.filter(image => image.title.rendered.match(imagePattern));
-        console.log(filteredImages)
-        filteredImages.forEach((image, index) => {
-          var imageUrl = image.source_url;
-          var carouselItem = document.createElement("div");
-          carouselItem.classList.add("carousel-item");
-
-          if (index === 0 && pageNumber===1) {
-            carouselItem.classList.add("active");
-          }
-
-          var imgElement = document.createElement("img");
-          imgElement.src = imageUrl;
-          imgElement.alt = image.alt_text || "Slide";
-          imgElement.setAttribute("loading", "lazy");
-
-          carouselItem.appendChild(imgElement);
-          carouselInner.appendChild(carouselItem);
-        });
-
-        // Initialize the Bootstrap carousel after adding images to the second page
-        if (pageNumber === totalPages) {
-          $('.carousel').carousel({
-            interval: 2000 // Adjust the interval (in milliseconds) between transitions
-          });
-        }
-      })
-      .catch(error => {
-        console.error("Error fetching images:", error);
-      });
-  }
-
- // Loop to fetch and add images for each page
-  for (var i = 1; i <= totalPages; i++) {
-    console.log(i)
-    fetchAndAddImages(i);
-  }
-});
+      populateCarouselWithImages("habitatCarousel", 2);
+      populateCarouselWithImages("birdsCarousel", 2)
+    });
 
 </script>
 <!-- Link to Bootstrap JS and Popper.js -->
