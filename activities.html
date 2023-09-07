@@ -80,6 +80,7 @@
           var imgElement = document.createElement("img");
           imgElement.src = imageUrl;
           imgElement.alt = image.alt_text || "Slide";
+          imgElement.setAttribute("loading", "lazy");
 
           carouselItem.appendChild(imgElement);
           carouselInner.appendChild(carouselItem);
