@@ -41,12 +41,12 @@ console.log(filteredImages)
       // Add lazy loading attribute to the image
       imgElement.loading = "lazy";
 
-      var caption = document.createElement("div");
-      caption.classList.add("carousel-caption");
-      caption.innerText = image.title.rendered; // Set caption text (if needed)
+      //var caption = document.createElement("div");
+      //caption.classList.add("carousel-caption");
+      //caption.innerText = image.title.rendered; // Set caption text (if needed)
 
       carouselItem.appendChild(imgElement);
-      carouselItem.appendChild(caption); // Append caption to the item
+      //carouselItem.appendChild(caption); // Append caption to the item
       carouselInner.appendChild(carouselItem);
     });
   }
